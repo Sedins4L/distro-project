@@ -1,0 +1,4 @@
+#!/bin/bash
+
+javac chess/*.java
+jar -cvfm Chess.jar manifest.txt chess/*.class
