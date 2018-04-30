@@ -20,6 +20,7 @@ public class MinMax {
         rand = new Random();
     }
 
+	// Alpha-beta pruning methods
     private float maxValue(Board b, ArrayList<Move> state, float alpha, float beta, int depth) {
         if(depth > maxDepth)
             return eval1(b, state, color);
@@ -159,52 +160,6 @@ public class MinMax {
             return moves.get(maxi);
     }
 
-    private float eval2(Board b, ArrayList<Move> moves, boolean currentColor) {
-        Tile[][] tiles = b.getTilesAfter(moves);
-
-        // check if king missing
-        boolean blackKing = false, whiteKing = false;
-        for(int i = 0; i < 8; i++)
-            for(int j = 0; j < 8; j++) {
-                if(tiles[i][j].isOccupied()) {
-                    if(tiles[i][j].getPiece().toString().equals("K")) {
-                        whiteKing = true;
-                    }
-                    if(tiles[i][j].getPiece().toString().equals("k")) {
-                        blackKing = true;
-                    }
-                }
-            }
-
-        if(color == Piece.WHITE) {
-            if(whiteKing == false)
-                return Float.NEGATIVE_INFINITY;
-            if(blackKing == false)
-                return Float.POSITIVE_INFINITY;
-        }
-        else {
-            if(whiteKing == false)
-                return Float.POSITIVE_INFINITY;
-            if(blackKing == false)
-                return Float.NEGATIVE_INFINITY;
-        }
-
-        int whiteScore = 0;
-        int blackScore = 0;
-		int[] scores = {whiteScore, blackScore};
-
-		getScores(scores, tiles);
-		whiteScore = scores[0];
-		blackScore = scores[1];
-
-		// Score represented by advantage/disadvantage based on total
-		// value of pieces remaining.
-        if(color == Piece.WHITE)
-            return whiteScore - blackScore;
-        else
-            return blackScore - whiteScore;
-    }
-
     private float eval1(Board b, ArrayList<Move> moves, boolean currentColor) {
         Tile[][] tiles = b.getTilesAfter(moves);
 
@@ -212,7 +167,7 @@ public class MinMax {
             if(b.isCheckAfter(currentColor, moves))
                 return (currentColor == this.color) ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
             else
-                return Float.NEGATIVE_INFINITY; // we don't like draws
+                return Float.NEGATIVE_INFINITY;
         }
 
         int whiteScore = 0;
@@ -228,7 +183,6 @@ public class MinMax {
         else
             return blackScore - whiteScore;
     }
-
 
 	public void getScores(int[] scores, Tile[][] tiles){
 		// Tally 'scores' for both players.
