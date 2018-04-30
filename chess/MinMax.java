@@ -25,7 +25,7 @@ public class MinMax {
             return eval1(b, state, color);
 
         ArrayList<Move> moves = b.getMovesAfter(color, state);
-        if(moves.size() == 0) // TODO add draw
+        if(moves.size() == 0)
             return Float.NEGATIVE_INFINITY;
 
         for(int i = 0; i < moves.size(); i++) {
@@ -38,12 +38,6 @@ public class MinMax {
 
             if(beta <= alpha)
                 break;
-
-            //if (max >= beta)
-            //	return max;
-
-            //if (max > alpha)
-            //	alpha = max;
         }
 
         return alpha;
@@ -54,7 +48,7 @@ public class MinMax {
             return eval1(b, state, !color);
 
         ArrayList<Move> moves = b.getMovesAfter(!color, state);
-        if(moves.size() == 0) // TODO add draw
+        if(moves.size() == 0) 
             return Float.POSITIVE_INFINITY;
 
         for(int i = 0; i < moves.size(); i++) {
@@ -67,20 +61,13 @@ public class MinMax {
 
             if(beta <= alpha)
                 break;
-
-
-            //if (min <= beta)
-            //	return min;
-
-            //if (min < beta)
-            //	beta = min;
         }
 
         return beta;
     }
 
     public Move decision(final Board b) {
-        // get maximum move
+        // Determine 'best' possible move
 
         final ArrayList<Move> moves = b.getMoves(color);
         if(moves.size() == 0)
