@@ -67,9 +67,11 @@ public class MinMax {
     }
 
     public Move decision(final Board b) {
-        // Determine 'best' possible move
+        // Determine 'best' possible by concurrently evaluating all moves available.
 
+		// Get all moves for this player.
         final ArrayList<Move> moves = b.getMoves(color);
+		// Cannot make a decision if no moves exist.
         if(moves.size() == 0)
             return null;
 
