@@ -45,7 +45,7 @@ public class Chess {
 
 			// Uncomment print statements of b to see play transpire
             result = b.makeMove(move);
-            // System.out.println(b);
+            System.out.println(b);
             if(result == -1) return (player1.getColor() == Piece.WHITE) ? -1 : 1; // black wins
             if(result == 1) return (player1.getColor() == Piece.WHITE) ? 1 : -1; // white wins
 
@@ -57,7 +57,7 @@ public class Chess {
                 return 0;
 
             result = b.makeMove(move);
-            // System.out.println(b);
+            System.out.println(b);
             if(result == -1) return (player1.getColor() == Piece.WHITE) ? 1 : -1; // black wins
             if(result == 1) return (player1.getColor() == Piece.WHITE) ? -1 : 1; // white wins
 

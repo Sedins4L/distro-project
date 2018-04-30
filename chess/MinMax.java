@@ -187,28 +187,21 @@ public class MinMax {
                 return Float.NEGATIVE_INFINITY;
         }
 
-
-
-
         int whiteScore = 0;
         int blackScore = 0;
+		int[] scores = {whiteScore, blackScore};
 
-        for(int i = 0; i < 8; i++)
-            for(int j = 0; j < 8; j++) {
-                if(tiles[i][j].isOccupied())
-                    if(tiles[i][j].getPiece().getColor() == Piece.WHITE)
-                        whiteScore += tiles[i][j].getPiece().getValue();
-                    else
-                        blackScore += tiles[i][j].getPiece().getValue();
-            }
+		getScores(scores, tiles);
+		whiteScore = scores[0];
+		blackScore = scores[1];
 
-
+		// Score represented by advantage/disadvantage based on total
+		// value of pieces remaining.
         if(color == Piece.WHITE)
             return whiteScore - blackScore;
         else
             return blackScore - whiteScore;
     }
-
 
     private float eval1(Board b, ArrayList<Move> moves, boolean currentColor) {
         Tile[][] tiles = b.getTilesAfter(moves);
@@ -222,16 +215,11 @@ public class MinMax {
 
         int whiteScore = 0;
         int blackScore = 0;
+		int[] scores = {whiteScore, blackScore};
 
-        for(int i = 0; i < 8; i++)
-            for(int j = 0; j < 8; j++) {
-                if(tiles[i][j].isOccupied())
-                    if(tiles[i][j].getPiece().getColor() == Piece.WHITE)
-                        whiteScore += tiles[i][j].getPiece().getValue();
-                    else
-                        blackScore += tiles[i][j].getPiece().getValue();
-            }
-
+		getScores(scores, tiles);
+		whiteScore = scores[0];
+		blackScore = scores[1];
 
         if(color == Piece.WHITE)
             return whiteScore - blackScore;
@@ -239,4 +227,22 @@ public class MinMax {
             return blackScore - whiteScore;
     }
 
-}
+
+	public void getScores(int[] scores, Tile[][] tiles){
+		// Tally 'scores' for both players.
+		// 1st element of array represents white, 2nd holds black.
+    	for(int i = 0; i < 8; i++) {
+        	for(int j = 0; j < 8; j++) {
+            	if(tiles[i][j].isOccupied()){ 
+                	if(tiles[i][j].getPiece().getColor() == Piece.WHITE)
+                    	scores[0] += tiles[i][j].getPiece().getValue();
+                	else
+                    	scores[1] += tiles[i][j].getPiece().getValue();
+				}
+        	}
+		}
+
+		// Hacky way to pass by reference? Perhaps.
+	}
+
+} // MinMax
