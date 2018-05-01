@@ -12,3 +12,5 @@ To run the project on the Bridges cluster, the source repository may be cloned i
 `git clone https://github.com/Sedins4L/distro-project.git`
 
 The repository already contains the executable jar file. You may run the program directly with either of the run configurations, or build it yourself.
+
+**Because of potential discrepancies between Java Runtimes on the development machine and Bridges, it is recommended you build the project first using the supplied build script.**
