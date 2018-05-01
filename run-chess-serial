@@ -1,0 +1,8 @@
+#!/bin/bash -l 
+#SBATCH -n 1
+#SBATCH -p RM
+#SBATCH -t 00:01:00 
+#SBATCH -J Chess_Simulation 
+#SBATCH -o ChessOutput.%j.out
+
+java -jar artifacts/Chess.jar 0

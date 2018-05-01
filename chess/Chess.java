@@ -3,18 +3,34 @@ package chess;
 public class Chess {
 
     public static void main(String[] args) {
+		// Retrieve implementation option
+		// 0 for single thread, 1 for multithread
+		final int OPTION = Integer.parseInt(args[0]);
+		if(OPTION != 0 && OPTION != 1){
+			System.out.println("Invalid option passed:");
+			System.out.println("Argument must be 0 or 1");
+			System.exit(1);
+		}
+
 		// Begin 'clock' to track game length
         long startTime = System.currentTimeMillis();
 		// Play three games
         int iter = 3;
-        float player1Score = 0;
+		float player1Score = 0;
         
         for(int i = 0; i < iter; i++) {
             Board board = new Board();
+			Player player1, player2;
+
 			// Give white a slight advantage with higher (lower?) depth
 			// of search.
-            Player player1 = new MinMaxPlayerSerial(Piece.WHITE,2);
-            Player player2 = new MinMaxPlayerSerial(Piece.BLACK,1);
+			if(OPTION == 0){
+            	player1 = new MinMaxPlayerSerial(Piece.WHITE,2);
+            	player2 = new MinMaxPlayerSerial(Piece.BLACK,1);
+			} else {
+				player1 = new MinMaxPlayer(Piece.WHITE, 2);
+				player2 = new MinMaxPlayer(Piece.BLACK, 1);
+			}
 
             int winner = play(player1, player2, board);
 
@@ -27,30 +43,7 @@ public class Chess {
 
         long elapsed = System.currentTimeMillis() - startTime;
         System.out.println("Player 1 won " + player1Score + " game(s).");
-        System.out.println("Total time: " + elapsed + "ms (single thread)");
-
-		// Now let's play three games with multithreaded decision making.
-		startTime = System.currentTimeMillis();
-		player1Score = 0;
-
-		for(int i = 0; i < iter; i++){	
-            Board board = new Board();
-			
-            Player player1 = new MinMaxPlayer(Piece.WHITE,2);
-            Player player2 = new MinMaxPlayer(Piece.BLACK,1);
-
-            int winner = play(player1, player2, board);
-
-            if(winner == 1)
-                player1Score++;
-            if(winner == 0) {
-                player1Score += 0.5f;
-            }
-		}
-
-		elapsed = System.currentTimeMillis() - startTime;
-        System.out.println("Player 1 won " + player1Score + " game(s).");
-        System.out.println("Total time: " + elapsed + "ms (concurrent)");
+        System.out.println("Total time: " + elapsed + "ms");
     }
 
     public static int play(Player player1, Player player2, Board b) {
