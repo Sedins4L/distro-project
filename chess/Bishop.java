@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.ArrayList;
-
 import chess.*;
 
 public class Bishop extends Piece {
@@ -25,8 +24,7 @@ public class Bishop extends Piece {
     public ArrayList<Move> getMoves(Board b, int x, int y) {
         ArrayList<Move> moves = new ArrayList<Move>();
 
-
-        // NE
+        // Up-left
         for(int i = 1; i < 8; i++) {
             if(valid(x+i, y+i)) {
                 if(b.getTile(x+i, y+i).isOccupied()) {
@@ -40,7 +38,7 @@ public class Bishop extends Piece {
             }
         }
 
-        // NW
+        // Up-right
         for(int i = 1; i < 8; i++) {
             if(valid(x-i, y+i)) {
                 if(b.getTile(x-i, y+i).isOccupied()) {
@@ -54,7 +52,7 @@ public class Bishop extends Piece {
             }
         }
 
-        // SE
+        // Down-left
         for(int i = 1; i < 8; i++) {
             if(valid(x+i, y-i)) {
                 if(b.getTile(x+i, y-i).isOccupied()) {
@@ -68,7 +66,7 @@ public class Bishop extends Piece {
             }
         }
 
-        // SW
+        // Down-right
         for(int i = 1; i < 8; i++) {
             if(valid(x-i, y-i)) {
                 if(b.getTile(x-i, y-i).isOccupied()) {
@@ -84,4 +82,4 @@ public class Bishop extends Piece {
 
         return moves;
     }
-}
+} // Bishop

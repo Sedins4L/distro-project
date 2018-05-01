@@ -6,69 +6,56 @@ public class Board {
     public static final int a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7;
 
     private Tile[][] tiles;
-    /**
-     * 	 8	r n b q k b n r
-     *	 7	p p p p p p p p
-     *	 6	. . . . . . . .
-     *	 5	. . . . . . . .
-     *	 4	. . . . . . . .
-     *	 3	. . . . . . . .
-     *	 2	P P P P P P P P
-     *	 1  R N B Q K B N R
-     *
-     *    	a b c d e f g h
-     *
-     * P=pawn, K=king, Q=queen, R=rook, N=knight, B=Bishop
-     * Uppercase is white
-     */
 
     public Board(Tile[][] tiles) {
         this.tiles = tiles;
     }
 
     public Board() {
-        // initialize board
+        // Initialize board
         boolean co = Piece.WHITE;
         tiles = new Tile[8][8];
-        tiles[a][1-1] = new Tile(new Rook(co));
-        tiles[b][1-1] = new Tile(new Knight(co));
-        tiles[c][1-1] = new Tile(new Bishop(co));
-        tiles[d][1-1] = new Tile(new Queen(co));
-        tiles[e][1-1] = new Tile(new King(co));
-        tiles[f][1-1] = new Tile(new Bishop(co));
-        tiles[g][1-1] = new Tile(new Knight(co));
-        tiles[h][1-1] = new Tile(new Rook(co));
+		// Bottom row
+        tiles[a][0] = new Tile(new Rook(co));
+        tiles[b][0] = new Tile(new Knight(co));
+        tiles[c][0] = new Tile(new Bishop(co));
+        tiles[d][0] = new Tile(new Queen(co));
+        tiles[e][0] = new Tile(new King(co));
+        tiles[f][0] = new Tile(new Bishop(co));
+        tiles[g][0] = new Tile(new Knight(co));
+        tiles[h][0] = new Tile(new Rook(co));
 
+		// Row of pawns
         for(int i = 0; i < 8; i++) {
-            tiles[i][2-1] = new Tile(new Pawn(co));
+            tiles[i][1] = new Tile(new Pawn(co));
         }
 
+		// Empty field
         for(int i = 2; i < 7; i++) {
             for(int j = 0; j < 8; j++) {
                 tiles[j][i] = new Tile();
             }
         }
 
+		// Top row
         co = Piece.BLACK;
-        tiles[a][8-1] = new Tile(new Rook(co));
-        tiles[b][8-1] = new Tile(new Knight(co));
-        tiles[c][8-1] = new Tile(new Bishop(co));
-        tiles[d][8-1] = new Tile(new Queen(co));
-        tiles[e][8-1] = new Tile(new King(co));
-        tiles[f][8-1] = new Tile(new Bishop(co));
-        tiles[g][8-1] = new Tile(new Knight(co));
-        tiles[h][8-1] = new Tile(new Rook(co));
+        tiles[a][7] = new Tile(new Rook(co));
+        tiles[b][7] = new Tile(new Knight(co));
+        tiles[c][7] = new Tile(new Bishop(co));
+        tiles[d][7] = new Tile(new Queen(co));
+        tiles[e][7] = new Tile(new King(co));
+        tiles[f][7] = new Tile(new Bishop(co));
+        tiles[g][7] = new Tile(new Knight(co));
+        tiles[h][7] = new Tile(new Rook(co));
 
+		// Row of (black) pawns
         for(int i = 0; i < 8; i++) {
-            tiles[i][7-1] = new Tile(new Pawn(co));
+            tiles[i][6] = new Tile(new Pawn(co));
         }
     }
 
-    public static void main(String[] args) {
-        Board b = new Board();
-        System.out.println(b);
-    }
-
+	// Ascii representation of playing board.
+	// a-h along x-axis, 1-8 along y-axis.
     public String toString() {
         String str = "";
         for(int i = 7; i >= 0; i--) {
@@ -88,49 +75,51 @@ public class Board {
         return getMoves(color, true);
     }
 
-    public boolean isCheck(boolean color) {
-        int x = -1, y = -1;
-        for(int i = 0; i < 8; i++)
+	public void getKingCoords(boolean color, int[] xy, Tile[][] t){	
+		for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++) {
-                if(tiles[i][j].isOccupied() &&
-                        tiles[i][j].getPiece().getColor() == color &&
-                        tiles[i][j].getPiece().toString().equalsIgnoreCase("K")) {
-                    x = i; y = j;
+                if(t[i][j].isOccupied() &&
+                        t[i][j].getPiece().getColor() == color &&
+                        t[i][j].getPiece().toString().equalsIgnoreCase("K")) {
+                    xy[0] = i;
+					xy[1] = j;
                 }
             }
+		}
+	}
 
-        // check a move if after making this move the king can be killed (moving into check)
+	// Determine whether this color is in check.
+    public boolean isCheck(boolean color) {
+        // Find the king first.	Set his coordinates to (x, y).
+		int x = -1, y = -1;
+		int[] coords = {x, y};
+		getKingCoords(color, coords, tiles);
+
+		// Obtain all possible moves of other color.
         ArrayList<Move> opponentMoves = getMoves(!color, false);
 
-        // check all opponent moves if they kill king (opponent moves in next round)
+		// Iterate through other color's options.
+		// If any of them end on this king's coords, this king is in check.
         for(int j = 0; j < opponentMoves.size(); j++) {
-            if(opponentMoves.get(j).getX2() == x && opponentMoves.get(j).getY2() == y)
+            if(opponentMoves.get(j).getX2() == coords[0] && opponentMoves.get(j).getY2() == coords[1])
                 return true;
         }
 
         return false;
     }
 
+	// Similar to isCheck, but looks a move ahead.
     public boolean isCheckAfter(boolean color, ArrayList<Move> moves) {
-
         Tile[][] newTiles = getTilesAfter(moves);
 
         int x = -1, y = -1;
-        for(int i = 0; i < 8; i++)
-            for(int j = 0; j < 8; j++) {
-                if(newTiles[i][j].isOccupied() &&
-                        newTiles[i][j].getPiece().getColor() == color &&
-                        newTiles[i][j].getPiece().toString().equalsIgnoreCase("K")) {
-                    x = i; y = j;
-                }
-            }
+		int[] coords = {x, y};
+		getKingCoords(color, coords, newTiles);
 
-        // check a move if after making this move the king can be killed (moving into check)
         ArrayList<Move> opponentMoves = getMovesAfter(!color, moves, false);
 
-        // check all opponent moves if they kill king (opponent moves in next round)
         for(int j = 0; j < opponentMoves.size(); j++) {
-            if(opponentMoves.get(j).getX2() == x && opponentMoves.get(j).getY2() == y)
+            if(opponentMoves.get(j).getX2() == coords[0] && opponentMoves.get(j).getY2() == coords[1])
                 return true;
         }
 
@@ -140,6 +129,7 @@ public class Board {
     public ArrayList<Move> getMoves(boolean color, boolean checkCheck) {
         ArrayList<Move> moves = new ArrayList<Move>();
 
+		// Find all of this color's pieces, add their moves to container.
         for(int i = 0; i < 8; i++)
             for(int j = 0; j < 8; j++) {
                 if(tiles[i][j].isOccupied() &&
@@ -148,39 +138,37 @@ public class Board {
                 }
             }
 
-        // check if move is valid (must not be check after move) and throw away erroneous moves
+		// Determine if move is valid.
+		// Specifically, that we're not moving into check.
         if(checkCheck) {
-            // find king (of correct color)
+  			// Find king first.
             int x = -1, y = -1;
-            for(int i = 0; i < 8; i++)
-                for(int j = 0; j < 8; j++) {
-                    if(tiles[i][j].isOccupied() &&
-                            tiles[i][j].getPiece().getColor() == color &&
-                            tiles[i][j].getPiece().toString().equalsIgnoreCase("K")) {
-                        x = i; y = j;
-                    }
-                }
+			int[] coords = {x, y};
+			getKingCoords(color, coords, tiles);
+			x = coords[0];
+			y = coords[1];
 
             ArrayList<Move> removeThese = new ArrayList<Move>();
             for(int i = 0; i < moves.size(); i++) {
-                // check a move if after making this move the king can be killed (moving into check)
+				// See if a move results in moving into check
                 ArrayList<Move> checkThis = new ArrayList<Move>(moves.subList(i, i+1));
                 ArrayList<Move> opponentMoves = getMovesAfter(!color, checkThis, false);
 
                 int xUpdated = x, yUpdated = y;
-                if(checkThis.get(0).getX1() == x && checkThis.get(0).getY1() == y) { // get updated king position
+                if(checkThis.get(0).getX1() == x && checkThis.get(0).getY1() == y) {
                     xUpdated = checkThis.get(0).getX2();
                     yUpdated = checkThis.get(0).getY2();
                 }
 
-                // check all opponent moves if they kill king (opponent moves in next round)
+				// Look ahead for opponent check opportunities
                 for(int j = 0; j < opponentMoves.size(); j++) {
                     if(opponentMoves.get(j).getX2() == xUpdated && opponentMoves.get(j).getY2() == yUpdated)
                         removeThese.add(checkThis.get(0));
                 }
             }
 
-            moves.removeAll(removeThese); // remove invalid moves
+			// Discard these 'invalid' moves
+            moves.removeAll(removeThese);
         }
 
         return moves;
