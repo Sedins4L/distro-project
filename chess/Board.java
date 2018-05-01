@@ -94,6 +94,8 @@ public class Board {
 		int x = -1, y = -1;
 		int[] coords = {x, y};
 		getKingCoords(color, coords, tiles);
+		x = coords[0];
+		y = coords[1];
 
 		// Obtain all possible moves of other color.
         ArrayList<Move> opponentMoves = getMoves(!color, false);
@@ -101,7 +103,7 @@ public class Board {
 		// Iterate through other color's options.
 		// If any of them end on this king's coords, this king is in check.
         for(int j = 0; j < opponentMoves.size(); j++) {
-            if(opponentMoves.get(j).getX2() == coords[0] && opponentMoves.get(j).getY2() == coords[1])
+            if(opponentMoves.get(j).getX2() == x && opponentMoves.get(j).getY2() == y)
                 return true;
         }
 
@@ -115,11 +117,13 @@ public class Board {
         int x = -1, y = -1;
 		int[] coords = {x, y};
 		getKingCoords(color, coords, newTiles);
+		x = coords[0];
+		y = coords[1];
 
         ArrayList<Move> opponentMoves = getMovesAfter(!color, moves, false);
 
         for(int j = 0; j < opponentMoves.size(); j++) {
-            if(opponentMoves.get(j).getX2() == coords[0] && opponentMoves.get(j).getY2() == coords[1])
+            if(opponentMoves.get(j).getX2() == x && opponentMoves.get(j).getY2() == y)
                 return true;
         }
 
@@ -228,7 +232,7 @@ public class Board {
         tiles[m.getX2()][m.getY2()] = tiles[m.getX1()][m.getY1()];
         tiles[m.getX1()][m.getY1()] = new Tile();
 
-        // pawn at top?
+        // Pawn promotion. Assumes player would choose another queen.
         if(oldTile.getPiece().toString().equals("P") && m.getY2() == 8-1)
             tiles[m.getX2()][m.getY2()] = new Tile(new Queen(Piece.WHITE));
 
@@ -241,5 +245,4 @@ public class Board {
     public Tile getTile(int x, int y) {
         return tiles[x][y];
     }
-
-}
+} // Board
